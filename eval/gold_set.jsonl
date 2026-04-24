@@ -1,0 +1,9 @@
+{"id":"msg_003","text":"I cant see properly out of my left eye since my filler appointment this morning","label":"red_flag_escalation","severity":"high","source":"synthetic"}
+{"id":"msg_005","text":"I think im having a reaction my face is swelling really fast and I feel dizzy","label":"red_flag_escalation","severity":"high","source":"synthetic"}
+{"id":"msg_008","text":"the bruising on my cheek looks different today, its red and warm and spreading","label":"urgent_clinical_review","severity":"high","source":"synthetic"}
+{"id":"msg_010","text":"my lips are very uneven and one side has gone down completely but the other is still swollen, its been 3 weeks","label":"urgent_clinical_review","severity":"medium","source":"synthetic"}
+{"id":"msg_013","text":"how long does it take to see the full results of botox","label":"routine_clinical_question","severity":"low","source":"synthetic"}
+{"id":"msg_019","text":"I feel a bit bruised around my eyes after my under eye filler is that expected","label":"post_treatment_reassurance","severity":"low","source":"synthetic"}
+{"id":"msg_021","text":"hi I just wanted to check the swelling in my lips will go down? they look really big right now","label":"post_treatment_reassurance","severity":"low","source":"synthetic"}
+{"id":"msg_026","text":"do you have any availability this week for a lip filler appointment","label":"scheduling_admin","severity":"low","source":"synthetic"}
+{"id":"msg_030","text":"I was charged twice for my last appointment can someone look into this for me","label":"billing_payment","severity":"low","source":"synthetic"}

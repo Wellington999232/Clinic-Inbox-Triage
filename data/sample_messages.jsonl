@@ -1,0 +1,30 @@
+{"id":"msg_001","text":"Hi I had lip filler yesterday and one side is completly white and its really painful","label":"red_flag_escalation","severity":"high","source":"synthetic"}
+{"id":"msg_002","text":"my throat feels like its closing up after my treatment today im scared","label":"red_flag_escalation","severity":"high","source":"synthetic"}
+{"id":"msg_003","text":"I cant see properly out of my left eye since my filler appointment this morning","label":"red_flag_escalation","severity":"high","source":"synthetic"}
+{"id":"msg_004","text":"the skin around my nose went white after filler and now its gone purple and its been 2 hours","label":"red_flag_escalation","severity":"high","source":"synthetic"}
+{"id":"msg_005","text":"I think im having a reaction my face is swelling really fast and I feel dizzy","label":"red_flag_escalation","severity":"high","source":"synthetic"}
+{"id":"msg_006","text":"its been 4 days since my lip filler and the swelling is getting worse not better and its hot to touch","label":"urgent_clinical_review","severity":"high","source":"synthetic"}
+{"id":"msg_007","text":"I have a hard lump under my eye that wasnt there before, it appeared about 2 weeks after my filler","label":"urgent_clinical_review","severity":"medium","source":"synthetic"}
+{"id":"msg_008","text":"the bruising on my cheek looks different today, its red and warm and spreading","label":"urgent_clinical_review","severity":"high","source":"synthetic"}
+{"id":"msg_009","text":"Ive had a really bad headache every day since my botox 5 days ago, is that normal","label":"urgent_clinical_review","severity":"medium","source":"synthetic"}
+{"id":"msg_010","text":"my lips are very uneven and one side has gone down completely but the other is still swollen, its been 3 weeks","label":"urgent_clinical_review","severity":"medium","source":"synthetic"}
+{"id":"msg_011","text":"is it normal to have swelling on day 2 after lip filler? just checking as its my first time","label":"routine_clinical_question","severity":"low","source":"synthetic"}
+{"id":"msg_012","text":"can I wear makeup tomorrow after my appointment today","label":"routine_clinical_question","severity":"low","source":"synthetic"}
+{"id":"msg_013","text":"how long does it take to see the full results of botox","label":"routine_clinical_question","severity":"low","source":"synthetic"}
+{"id":"msg_014","text":"I have a small bruise on my forehead after my appointment is that expected","label":"routine_clinical_question","severity":"low","source":"synthetic"}
+{"id":"msg_015","text":"can I exercise the day after lip filler or should I wait","label":"routine_clinical_question","severity":"low","source":"synthetic"}
+{"id":"msg_016","text":"when can I drink alcohol after my botox treatment","label":"routine_clinical_question","severity":"low","source":"synthetic"}
+{"id":"msg_017","text":"my lips feel a bit lumpy is that normal after filler","label":"post_treatment_reassurance","severity":"low","source":"synthetic"}
+{"id":"msg_018","text":"there is some redness around the injection sites on my forehead should I be worried","label":"post_treatment_reassurance","severity":"low","source":"synthetic"}
+{"id":"msg_019","text":"I feel a bit bruised around my eyes after my under eye filler is that expected","label":"post_treatment_reassurance","severity":"low","source":"synthetic"}
+{"id":"msg_020","text":"my forehead feels quite heavy and I cant raise my eyebrows much after botox is this normal","label":"post_treatment_reassurance","severity":"low","source":"synthetic"}
+{"id":"msg_021","text":"hi I just wanted to check the swelling in my lips will go down? they look really big right now","label":"post_treatment_reassurance","severity":"low","source":"synthetic"}
+{"id":"msg_022","text":"there is some tenderness when I press on my cheek filler area, is that okay after 2 days","label":"post_treatment_reassurance","severity":"low","source":"synthetic"}
+{"id":"msg_023","text":"hi can I move my appointment from this Thursday to next Monday please","label":"scheduling_admin","severity":"low","source":"synthetic"}
+{"id":"msg_024","text":"what time does the clinic open on Saturdays","label":"scheduling_admin","severity":"low","source":"synthetic"}
+{"id":"msg_025","text":"I need to cancel my booking for next week, something has come up","label":"scheduling_admin","severity":"low","source":"synthetic"}
+{"id":"msg_026","text":"do you have any availability this week for a lip filler appointment","label":"scheduling_admin","severity":"low","source":"synthetic"}
+{"id":"msg_027","text":"what is the address of the clinic I have an appointment tomorrow and cant find the details","label":"scheduling_admin","severity":"low","source":"synthetic"}
+{"id":"msg_028","text":"I dont think I received my receipt from my appointment last Tuesday can you resend it","label":"billing_payment","severity":"low","source":"synthetic"}
+{"id":"msg_029","text":"can I pay for my treatment in instalments or does it have to be all at once","label":"billing_payment","severity":"low","source":"synthetic"}
+{"id":"msg_030","text":"I was charged twice for my last appointment can someone look into this for me","label":"billing_payment","severity":"low","source":"synthetic"}
