@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException
+from contextlib import asynccontextmanager
 from app.schemas import MessageInput, TriageResult
 from app.classifier import classify_message
 from app.guardrail_schemas import GuardrailEvalInput, GuardrailEvalResult
@@ -7,14 +8,24 @@ from app.simplifier_schemas import SimplifierInput, SimplifierResult
 from app.simplifier import simplify_document
 from app.doc_structurer_schemas import DocStructurerInput, DocStructurerResult
 from app.doc_structurer import structure_document
+from app.database import init_db
 import logging
 
 logger = logging.getLogger(__name__)
+
+
+@asynccontextmanager
+async def lifespan(app_instance):
+    init_db()
+    logger.info("Database initialised successfully")
+    yield
+
 
 app = FastAPI(
     title="Clinic Inbox Triage Assistant",
     description="Classifies patient messages, evaluates replies, simplifies documents, and structures clinical SOPs.",
     version="4.0.0",
+    lifespan=lifespan,
 )
 
 
@@ -88,10 +99,6 @@ def classify_and_evaluate(message: MessageInput):
 
 @app.post("/simplify", response_model=SimplifierResult)
 def simplify(input: SimplifierInput):
-    """
-    Convert a clinical aftercare document into five simplified formats:
-    plain language, Grade 6 reading level, checklist, FAQ, and SMS messages.
-    """
     try:
         result = simplify_document(input)
         return result
@@ -102,11 +109,6 @@ def simplify(input: SimplifierInput):
 
 @app.post("/structure", response_model=DocStructurerResult)
 def structure(input: DocStructurerInput):
-    """
-    Convert an unstructured clinical SOP or protocol draft into a
-    standardised document with sections, action table, escalation rules,
-    and version metadata.
-    """
     try:
         result = structure_document(input)
         return result
