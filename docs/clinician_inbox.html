@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clinician Inbox</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#faf8f6;min-height:100vh}
+.header{background:#fff;border-bottom:1px solid #e8e0d8;padding:1.25rem 2rem;display:flex;align-items:center;gap:12px}
+.logo-dot{width:10px;height:10px;border-radius:50%;background:#c9a882}
+.header-title{font-size:15px;font-weight:500;color:#2c2c2a;letter-spacing:.02em}
+.header-sub{font-size:12px;color:#9a8878;margin-left:auto}
+.refresh-btn{background:#fff;border:1px solid #e8e0d8;border-radius:8px;padding:6px 14px;font-size:12px;color:#9a8878;cursor:pointer}
+.refresh-btn:hover{border-color:#c9a882;color:#c9a882}
+.container{max-width:840px;margin:2rem auto;padding:0 1.5rem}
+.summary-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1.5rem}
+.summary-card{background:#fff;border:1px solid #e8e0d8;border-radius:12px;padding:14px 16px;text-align:center}
+.summary-count{font-size:24px;font-weight:600;color:#2c2c2a}
+.summary-label{font-size:11px;color:#9a8878;letter-spacing:.05em;text-transform:uppercase;margin-top:4px}
+.summary-card.high .summary-count{color:#A32D2D}
+.summary-card.medium .summary-count{color:#854F0B}
+.message-card{background:#fff;border-radius:14px;border:1px solid #e8e0d8;margin-bottom:1rem;overflow:hidden}
+.message-card.high{border-left:4px solid #A32D2D}
+.message-card.medium{border-left:4px solid #854F0B}
+.message-card.low{border-left:4px solid #3B6D11}
+.message-card.replied{opacity:0.55}
+.card-top{padding:1.1rem 1.25rem 0.75rem;display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.patient-name{font-size:15px;font-weight:600;color:#2c2c2a}
+.patient-meta{font-size:12px;color:#9a8878;margin-top:2px}
+.severity-pill{font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.03em;white-space:nowrap}
+.severity-pill.high{background:#fcebeb;color:#A32D2D}
+.severity-pill.medium{background:#faeeda;color:#854F0B}
+.severity-pill.low{background:#eaf3de;color:#3B6D11}
+.patient-message{padding:0 1.25rem 0.9rem;font-size:14px;color:#2c2c2a;line-height:1.6}
+.card-section{padding:0 1.25rem 0.9rem}
+.section-label{font-size:10px;font-weight:600;color:#9a8878;letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px}
+.action-text{font-size:13px;color:#2c2c2a;background:#faf8f6;border-radius:8px;padding:10px 12px;line-height:1.5}
+.reply-box{width:100%;border:1px solid #e8e0d8;border-radius:8px;padding:10px 12px;font-size:13px;font-family:inherit;color:#2c2c2a;background:#faf8f6;resize:vertical;min-height:70px;line-height:1.6}
+.tags-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.tag{background:#f5ede4;color:#7a5c3f;font-size:11px;padding:3px 9px;border-radius:20px}
+.card-actions{display:flex;gap:8px;padding:1rem 1.25rem;border-top:1px solid #f0eae3}
+.btn-send{flex:1;padding:10px;background:#c9a882;border:none;border-radius:8px;font-size:13px;font-weight:500;color:#fff;cursor:pointer}
+.btn-send:hover{background:#b8956f}
+.btn-send:disabled{background:#d9cfc7;cursor:not-allowed}
+.replied-badge{flex:1;text-align:center;padding:10px;background:#eaf3de;border-radius:8px;font-size:13px;color:#27500A;font-weight:500}
+.empty-state{text-align:center;padding:3rem 1rem;color:#9a8878;font-size:14px}
+.loading{text-align:center;padding:3rem 1rem;color:#9a8878;font-size:14px}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="logo-dot"></div>
+  <span class="header-title">Clinician Inbox</span>
+  <span class="header-sub" id="lastUpdated">Loading...</span>
+  <button class="refresh-btn" onclick="loadMessages()">Refresh</button>
+</div>
+<div class="container">
+  <div class="summary-row" id="summaryRow"></div>
+  <div id="messagesContainer">
+    <div class="loading">Loading messages...</div>
+  </div>
+</div>
+
+<script>
+const API_BASE = "https://clinic-inbox-triage.onrender.com";
+const token = localStorage.getItem("clinic_token");
+const clinicianName = localStorage.getItem("clinic_name") || "Clinic Staff";
+if(!token){ window.location.href = "https://wellington999232.github.io/Clinic-Inbox-Triage/login.html"; }
+let allMessages = [];
+
+async function loadMessages(){
+  const container = document.getElementById("messagesContainer");
+  try{
+    const res = await fetch(API_BASE + "/inbox/messages", {headers: {"Authorization": "Bearer " + token}});
+    allMessages = await res.json();
+    renderSummary();
+    renderMessages();
+    document.getElementById("lastUpdated").textContent = "Updated " + new Date().toLocaleTimeString();
+  }catch(e){
+    container.innerHTML = "<div class='empty-state'>Could not load messages. " + e.message + "</div>";
+  }
+}
+
+function renderSummary(){
+  const pending = allMessages.filter(m => m.status === "pending");
+  const high = pending.filter(m => m.severity === "high").length;
+  const medium = pending.filter(m => m.severity === "medium").length;
+  const low = pending.filter(m => m.severity === "low").length;
+  const total = pending.length;
+
+  document.getElementById("summaryRow").innerHTML = `
+    <div class="summary-card"><div class="summary-count">${total}</div><div class="summary-label">Pending</div></div>
+    <div class="summary-card high"><div class="summary-count">${high}</div><div class="summary-label">High</div></div>
+    <div class="summary-card medium"><div class="summary-count">${medium}</div><div class="summary-label">Medium</div></div>
+    <div class="summary-card"><div class="summary-count">${low}</div><div class="summary-label">Low</div></div>
+  `;
+}
+
+function renderMessages(){
+  const container = document.getElementById("messagesContainer");
+  if(allMessages.length === 0){
+    container.innerHTML = "<div class='empty-state'>No messages yet.</div>";
+    return;
+  }
+
+  container.innerHTML = allMessages.map(msg => {
+    const isReplied = msg.status === "replied";
+    const tags = msg.reasoning_tags ? msg.reasoning_tags.split(",").map(t => "<span class='tag'>" + t.trim() + "</span>").join("") : "";
+    const meta = [msg.patient_email, msg.patient_phone].filter(Boolean).join("  |  ");
+
+    return `
+      <div class="message-card ${msg.severity} ${isReplied ? 'replied' : ''}">
+        <div class="card-top">
+          <div>
+            <div class="patient-name">${escapeHtml(msg.patient_name)}</div>
+            <div class="patient-meta">${escapeHtml(meta)}</div>
+          </div>
+          <div class="severity-pill ${msg.severity}">${msg.primary_label.replace(/_/g, " ")}</div>
+        </div>
+        <div class="patient-message">${escapeHtml(msg.message_text)}</div>
+        <div class="card-section">
+          <div class="section-label">Recommended Action</div>
+          <div class="action-text">${escapeHtml(msg.recommended_action)}</div>
+        </div>
+        <div class="card-section">
+          <div class="section-label">Reply</div>
+          <textarea class="reply-box" id="reply-${msg.id}" ${isReplied ? 'disabled' : ''}>${escapeHtml(isReplied ? msg.final_reply_sent : msg.safe_reply)}</textarea>
+          <div class="tags-row">${tags}</div>
+        </div>
+        <div class="card-actions">
+          ${isReplied
+            ? `<div class="replied-badge">Replied by ${escapeHtml(msg.replied_by || 'staff')}</div>`
+            : `<button class="btn-send" onclick="sendReply('${msg.id}')">Send Reply</button>`
+          }
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+async function sendReply(messageId){
+  const textarea = document.getElementById("reply-" + messageId);
+  const replyText = textarea.value.trim();
+  if(!replyText){ alert("Reply cannot be empty."); return; }
+
+  try{
+    const res = await fetch(API_BASE + "/inbox/reply", {
+      method: "POST",
+      headers: {"Content-Type": "application/json", "Authorization": "Bearer " + token},
+      body: JSON.stringify({
+        message_id: messageId,
+        reply_text: replyText,
+        replied_by: clinicianName
+      })
+    });
+    if(!res.ok){ throw new Error("Failed to send reply"); }
+    await loadMessages();
+  }catch(e){
+    alert("Error sending reply: " + e.message);
+  }
+}
+
+function escapeHtml(text){
+  if(!text) return "";
+  const div = document.createElement("div");
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+loadMessages();
+setInterval(loadMessages, 30000);
+</script>
+</body>
+</html>
