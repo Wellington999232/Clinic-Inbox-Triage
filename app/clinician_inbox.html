@@ -64,12 +64,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#faf8f6;
 
 <script>
 const API_BASE = "https://clinic-inbox-triage.onrender.com";
+const token = localStorage.getItem("clinic_token");
+const clinicianName = localStorage.getItem("clinic_name") || "Clinic Staff";
+if(!token){ window.location.href = "https://clinic-login.netlify.app/"; }
 let allMessages = [];
 
 async function loadMessages(){
   const container = document.getElementById("messagesContainer");
   try{
-    const res = await fetch(API_BASE + "/inbox/messages");
+    const res = await fetch(API_BASE + "/inbox/messages", {headers: {"Authorization": "Bearer " + token}});
     allMessages = await res.json();
     renderSummary();
     renderMessages();
@@ -144,11 +147,11 @@ async function sendReply(messageId){
   try{
     const res = await fetch(API_BASE + "/inbox/reply", {
       method: "POST",
-      headers: {"Content-Type": "application/json"},
+      headers: {"Content-Type": "application/json", "Authorization": "Bearer " + token},
       body: JSON.stringify({
         message_id: messageId,
         reply_text: replyText,
-        replied_by: "Clinic Staff"
+        replied_by: clinicianName
       })
     });
     if(!res.ok){ throw new Error("Failed to send reply"); }

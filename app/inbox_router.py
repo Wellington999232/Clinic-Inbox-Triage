@@ -8,6 +8,8 @@ from app.database import get_db
 from app.models import PatientMessage, AuditLog
 from app.schemas import MessageInput
 from app.classifier import classify_message
+from app.auth import get_current_clinician
+from app.models import Clinician
 
 router = APIRouter(prefix="/inbox", tags=["inbox"])
 
@@ -64,21 +66,21 @@ def submit_message(submission: PatientSubmission, db: Session = Depends(get_db))
     }
 
 @router.get("/messages")
-def get_messages(db: Session = Depends(get_db)):
+def get_messages(db: Session = Depends(get_db), clinician: Clinician = Depends(get_current_clinician)):
     severity_order = {"high": 0, "medium": 1, "low": 2}
     messages = db.query(PatientMessage).all()
     sorted_messages = sorted(messages, key=lambda m: (severity_order.get(m.severity, 3), m.submitted_at))
     return [{"id": str(m.id), "patient_name": m.patient_name, "patient_email": m.patient_email, "patient_phone": m.patient_phone, "message_text": m.message_text, "submitted_at": m.submitted_at.isoformat(), "primary_label": m.primary_label, "severity": m.severity, "confidence": m.confidence, "recommended_action": m.recommended_action, "safe_reply": m.safe_reply, "reasoning_tags": m.reasoning_tags, "status": m.status, "policy_override_triggered": m.policy_override_triggered} for m in sorted_messages]
 
 @router.get("/message/{message_id}")
-def get_message(message_id: str, db: Session = Depends(get_db)):
+def get_message(message_id: str, db: Session = Depends(get_db), clinician: Clinician = Depends(get_current_clinician)):
     message = db.query(PatientMessage).filter(PatientMessage.id == uuid.UUID(message_id)).first()
     if not message:
         raise HTTPException(status_code=404, detail="Message not found")
     return {"id": str(message.id), "patient_name": message.patient_name, "patient_email": message.patient_email, "patient_phone": message.patient_phone, "message_text": message.message_text, "submitted_at": message.submitted_at.isoformat(), "primary_label": message.primary_label, "severity": message.severity, "confidence": message.confidence, "recommended_action": message.recommended_action, "safe_reply": message.safe_reply, "reasoning_tags": message.reasoning_tags, "status": message.status, "policy_override_triggered": message.policy_override_triggered, "final_reply_sent": message.final_reply_sent, "replied_by": message.replied_by, "replied_at": message.replied_at.isoformat() if message.replied_at else None}
 
 @router.post("/reply")
-def send_reply(request: ReplyRequest, db: Session = Depends(get_db)):
+def send_reply(request: ReplyRequest, db: Session = Depends(get_db), clinician: Clinician = Depends(get_current_clinician)):
     message = db.query(PatientMessage).filter(PatientMessage.id == uuid.UUID(request.message_id)).first()
     if not message:
         raise HTTPException(status_code=404, detail="Message not found")
