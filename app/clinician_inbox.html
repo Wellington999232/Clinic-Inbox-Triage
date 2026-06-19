@@ -3,173 +3,499 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Clinician Inbox</title>
+<title>Clinic Dashboard</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#faf8f6;min-height:100vh}
-.header{background:#fff;border-bottom:1px solid #e8e0d8;padding:1.25rem 2rem;display:flex;align-items:center;gap:12px}
-.logo-dot{width:10px;height:10px;border-radius:50%;background:#c9a882}
-.header-title{font-size:15px;font-weight:500;color:#2c2c2a;letter-spacing:.02em}
-.header-sub{font-size:12px;color:#9a8878;margin-left:auto}
-.refresh-btn{background:#fff;border:1px solid #e8e0d8;border-radius:8px;padding:6px 14px;font-size:12px;color:#9a8878;cursor:pointer}
-.refresh-btn:hover{border-color:#c9a882;color:#c9a882}
-.container{max-width:840px;margin:2rem auto;padding:0 1.5rem}
-.summary-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1.5rem}
-.summary-card{background:#fff;border:1px solid #e8e0d8;border-radius:12px;padding:14px 16px;text-align:center}
-.summary-count{font-size:24px;font-weight:600;color:#2c2c2a}
-.summary-label{font-size:11px;color:#9a8878;letter-spacing:.05em;text-transform:uppercase;margin-top:4px}
-.summary-card.high .summary-count{color:#A32D2D}
-.summary-card.medium .summary-count{color:#854F0B}
-.message-card{background:#fff;border-radius:14px;border:1px solid #e8e0d8;margin-bottom:1rem;overflow:hidden}
-.message-card.high{border-left:4px solid #A32D2D}
-.message-card.medium{border-left:4px solid #854F0B}
-.message-card.low{border-left:4px solid #3B6D11}
-.message-card.replied{opacity:0.55}
-.card-top{padding:1.1rem 1.25rem 0.75rem;display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
-.patient-name{font-size:15px;font-weight:600;color:#2c2c2a}
-.patient-meta{font-size:12px;color:#9a8878;margin-top:2px}
-.severity-pill{font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.03em;white-space:nowrap}
-.severity-pill.high{background:#fcebeb;color:#A32D2D}
-.severity-pill.medium{background:#faeeda;color:#854F0B}
-.severity-pill.low{background:#eaf3de;color:#3B6D11}
-.patient-message{padding:0 1.25rem 0.9rem;font-size:14px;color:#2c2c2a;line-height:1.6}
-.card-section{padding:0 1.25rem 0.9rem}
-.section-label{font-size:10px;font-weight:600;color:#9a8878;letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px}
-.action-text{font-size:13px;color:#2c2c2a;background:#faf8f6;border-radius:8px;padding:10px 12px;line-height:1.5}
-.reply-box{width:100%;border:1px solid #e8e0d8;border-radius:8px;padding:10px 12px;font-size:13px;font-family:inherit;color:#2c2c2a;background:#faf8f6;resize:vertical;min-height:70px;line-height:1.6}
-.tags-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
-.tag{background:#f5ede4;color:#7a5c3f;font-size:11px;padding:3px 9px;border-radius:20px}
-.card-actions{display:flex;gap:8px;padding:1rem 1.25rem;border-top:1px solid #f0eae3}
-.btn-send{flex:1;padding:10px;background:#c9a882;border:none;border-radius:8px;font-size:13px;font-weight:500;color:#fff;cursor:pointer}
-.btn-send:hover{background:#b8956f}
-.btn-send:disabled{background:#d9cfc7;cursor:not-allowed}
-.replied-badge{flex:1;text-align:center;padding:10px;background:#eaf3de;border-radius:8px;font-size:13px;color:#27500A;font-weight:500}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f3f0;display:flex;height:100vh;overflow:hidden}
+.sidebar{width:220px;background:#1a1a18;display:flex;flex-direction:column;flex-shrink:0}
+.sidebar-header{padding:1.5rem 1.25rem 1rem;border-bottom:1px solid #2a2a28}
+.sidebar-logo{display:flex;align-items:center;gap:8px}
+.logo-dot{width:8px;height:8px;border-radius:50%;background:#c9a882}
+.logo-name{font-size:13px;font-weight:500;color:#f0ece6;letter-spacing:.02em}
+.logo-sub{font-size:11px;color:#6b6b60;margin-top:2px}
+.sidebar-nav{padding:1rem 0;flex:1;overflow-y:auto}
+.nav-section{padding:0 1rem;margin-bottom:1.5rem}
+.nav-label{font-size:10px;color:#4a4a45;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;padding:0 8px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;cursor:pointer;margin-bottom:2px;border:none;background:none;width:100%;text-align:left}
+.nav-item:hover{background:#252522}
+.nav-item.active{background:#2a2520;border-left:2px solid #c9a882;padding-left:8px}
+.nav-icon{font-size:16px;color:#6b6b60;width:18px;text-align:center}
+.nav-item.active .nav-icon{color:#c9a882}
+.nav-text{font-size:13px;color:#8a8a80}
+.nav-item.active .nav-text{color:#e8e0d6}
+.nav-badge{margin-left:auto;background:#A32D2D;color:#fcebeb;font-size:10px;font-weight:600;padding:2px 7px;border-radius:20px}
+.sidebar-footer{padding:1rem 1.25rem;border-top:1px solid #2a2a28}
+.clinician-row{display:flex;align-items:center;gap:10px}
+.avatar{width:32px;height:32px;border-radius:50%;background:#2a2520;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;color:#c9a882;flex-shrink:0}
+.cli-name{font-size:12px;color:#8a8a80}
+.cli-role{font-size:11px;color:#4a4a45}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.topbar{background:#fff;border-bottom:1px solid #e8e0d8;padding:.875rem 1.5rem;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.page-title{font-size:15px;font-weight:500;color:#1a1a18}
+.page-sub{font-size:12px;color:#9a8878;margin-top:1px}
+.topbar-right{display:flex;align-items:center;gap:8px}
+.tbtn{background:#f5f3f0;border:1px solid #e8e0d8;border-radius:8px;padding:6px 12px;font-size:12px;color:#6b6860;cursor:pointer}
+.tbtn:hover{border-color:#c9a882;color:#c9a882}
+.content{flex:1;overflow-y:auto;padding:1.25rem 1.5rem}
+.panel{display:none}
+.panel.active{display:block}
+.summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1.25rem}
+.scard{background:#fff;border:1px solid #e8e0d8;border-radius:12px;padding:1rem 1.1rem}
+.snum{font-size:22px;font-weight:600;color:#1a1a18}
+.snum.red{color:#A32D2D}
+.snum.amber{color:#854F0B}
+.slbl{font-size:11px;color:#9a8878;margin-top:3px;text-transform:uppercase;letter-spacing:.03em}
+.msg-card{background:#fff;border-radius:12px;border:1px solid #e8e0d8;overflow:hidden;margin-bottom:.75rem}
+.msg-card.high{border-left:3px solid #A32D2D}
+.msg-card.medium{border-left:3px solid #854F0B}
+.msg-card.low{border-left:3px solid #3B6D11}
+.msg-card.replied{opacity:.5}
+.card-top{padding:.9rem 1.1rem .6rem;display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.pt-name{font-size:14px;font-weight:500;color:#1a1a18}
+.pt-meta{font-size:11px;color:#9a8878;margin-top:2px}
+.pill{font-size:10px;font-weight:600;padding:3px 9px;border-radius:20px;text-transform:uppercase;letter-spacing:.03em;white-space:nowrap}
+.pill.high{background:#fcebeb;color:#791F1F}
+.pill.medium{background:#faeeda;color:#633806}
+.pill.low{background:#eaf3de;color:#27500A}
+.card-body{padding:0 1.1rem .8rem;font-size:13px;color:#3a3a38;line-height:1.55}
+.card-section{padding:0 1.1rem .75rem}
+.slabel{font-size:10px;font-weight:600;color:#9a8878;letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px}
+.action-box{background:#f5f3f0;border-radius:8px;padding:8px 10px;font-size:12px;color:#3a3a38;line-height:1.5}
+.reply-area{width:100%;border:1px solid #e8e0d8;border-radius:8px;padding:9px 11px;font-size:13px;font-family:inherit;color:#1a1a18;background:#faf8f6;resize:vertical;min-height:68px;outline:none}
+.reply-area:focus{border-color:#c9a882}
+.tags-row{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.tag{background:#f5ede4;color:#7a5c3f;font-size:11px;padding:3px 8px;border-radius:20px}
+.card-footer{padding:.6rem 1.1rem;border-top:1px solid #f0ece8;display:flex;align-items:center;justify-content:space-between}
+.foot-action{font-size:12px;color:#6b6860}
+.btn-row{display:flex;gap:6px}
+.btn-outline{background:#fff;border:1px solid #e8e0d8;border-radius:7px;padding:5px 12px;font-size:12px;color:#6b6860;cursor:pointer}
+.btn-outline:hover{border-color:#c9a882;color:#c9a882}
+.btn-primary{background:#c9a882;border:none;border-radius:7px;padding:5px 14px;font-size:12px;color:#fff;cursor:pointer;font-weight:500}
+.btn-primary:hover{background:#b8956f}
+.btn-primary:disabled{background:#d9cfc7;cursor:not-allowed}
+.replied-badge{font-size:12px;color:#27500A;background:#eaf3de;padding:5px 12px;border-radius:7px;font-weight:500}
+.tool-card{background:#fff;border-radius:12px;border:1px solid #e8e0d8;padding:1.25rem;margin-bottom:1rem}
+.tool-header{display:flex;align-items:center;gap:12px;margin-bottom:1rem;padding-bottom:.75rem;border-bottom:1px solid #f0ece8}
+.tool-icon-wrap{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.tool-icon-wrap.gold{background:#faeeda;color:#854F0B}
+.tool-icon-wrap.teal{background:#e1f5ee;color:#0F6E56}
+.tool-icon-wrap.purple{background:#eeedfe;color:#534AB7}
+.tool-title{font-size:14px;font-weight:500;color:#1a1a18}
+.tool-desc{font-size:12px;color:#9a8878;margin-top:2px}
+.field-label{font-size:11px;font-weight:500;color:#9a8878;letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px;margin-top:1rem;display:block}
+.field-label:first-of-type{margin-top:0}
+textarea.tinput{width:100%;border:1px solid #e8e0d8;border-radius:8px;padding:10px 12px;font-size:13px;font-family:inherit;color:#1a1a18;background:#faf8f6;resize:vertical;outline:none;min-height:80px;line-height:1.6}
+textarea.tinput:focus{border-color:#c9a882}
+.run-btn{margin-top:.75rem;padding:9px 18px;background:#1a1a18;border:none;border-radius:8px;font-size:12px;color:#f0ece6;cursor:pointer;font-weight:500}
+.run-btn:hover{background:#2a2a28}
+.run-btn:disabled{background:#9a8878;cursor:not-allowed}
+.result-box{margin-top:1rem;background:#faf8f6;border:1px solid #e8e0d8;border-radius:8px;padding:1rem;font-size:13px;color:#1a1a18;line-height:1.7;white-space:pre-wrap;display:none}
+.result-box.visible{display:block}
+.result-section{margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px solid #f0ece8}
+.result-section:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.result-label{font-size:10px;font-weight:600;color:#9a8878;letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px}
+.result-content{font-size:13px;color:#1a1a18;line-height:1.7}
+.check-row{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid #f5f3f0}
+.check-row:last-child{border-bottom:none}
+.check-status{font-size:11px;font-weight:600;padding:2px 7px;border-radius:20px;white-space:nowrap;margin-top:1px}
+.check-status.pass{background:#eaf3de;color:#27500A}
+.check-status.fail{background:#fcebeb;color:#791F1F}
+.check-status.warn{background:#faeeda;color:#633806}
+.check-name{font-size:12px;font-weight:500;color:#1a1a18}
+.check-reason{font-size:12px;color:#6b6860;margin-top:1px}
 .empty-state{text-align:center;padding:3rem 1rem;color:#9a8878;font-size:14px}
-.loading{text-align:center;padding:3rem 1rem;color:#9a8878;font-size:14px}
+.loading-state{text-align:center;padding:2rem;color:#9a8878;font-size:13px}
+.sms-item{background:#f5f3f0;border-radius:8px;padding:8px 10px;font-size:12px;color:#1a1a18;line-height:1.5;margin-bottom:6px}
+.sms-seq{font-size:10px;font-weight:600;color:#9a8878;margin-bottom:3px;text-transform:uppercase;letter-spacing:.04em}
+.checklist-item{display:flex;align-items:flex-start;gap:8px;padding:5px 0;font-size:13px;color:#1a1a18;border-bottom:1px solid #f5f3f0}
+.checklist-item:last-child{border-bottom:none}
+.checklist-dot{width:6px;height:6px;border-radius:50%;background:#c9a882;margin-top:6px;flex-shrink:0}
+.checklist-dot.warning{background:#A32D2D}
+.faq-item{padding:6px 0;border-bottom:1px solid #f5f3f0}
+.faq-item:last-child{border-bottom:none}
+.faq-q{font-size:13px;font-weight:500;color:#1a1a18;margin-bottom:3px}
+.faq-a{font-size:12px;color:#6b6860;line-height:1.5}
+.struct-section{background:#f5f3f0;border-radius:8px;padding:10px 12px;margin-bottom:8px}
+.struct-heading{font-size:12px;font-weight:600;color:#1a1a18;margin-bottom:4px}
+.struct-content{font-size:12px;color:#3a3a38;line-height:1.6}
+.action-table{width:100%;border-collapse:collapse;font-size:12px}
+.action-table th{background:#f5f3f0;padding:7px 10px;text-align:left;font-weight:500;color:#6b6860;font-size:11px;text-transform:uppercase;letter-spacing:.04em}
+.action-table td{padding:7px 10px;border-top:1px solid #f0ece8;color:#1a1a18;vertical-align:top}
+.esc-item{border-left:3px solid #A32D2D;padding:8px 10px;background:#fcebeb;border-radius:0 8px 8px 0;margin-bottom:6px}
+.esc-trigger{font-size:12px;font-weight:500;color:#791F1F;margin-bottom:2px}
+.esc-action{font-size:12px;color:#A32D2D}
+.version-block{background:#1a1a18;border-radius:8px;padding:10px 14px;font-size:12px;color:#8a8a80;font-family:monospace;line-height:1.8}
 </style>
 </head>
 <body>
-<div class="header">
-  <div class="logo-dot"></div>
-  <span class="header-title">Clinician Inbox</span>
-  <span class="header-sub" id="lastUpdated">Loading...</span>
-  <button class="refresh-btn" onclick="loadMessages()">Refresh</button>
-</div>
-<div class="container">
-  <div class="summary-row" id="summaryRow"></div>
-  <div id="messagesContainer">
-    <div class="loading">Loading messages...</div>
+
+<div class="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-logo">
+      <div class="logo-dot"></div>
+      <div>
+        <div class="logo-name">Clinic Inbox</div>
+        <div class="logo-sub">Clinical Operations</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sidebar-nav">
+    <div class="nav-section">
+      <div class="nav-label">Inbox</div>
+      <button class="nav-item active" onclick="showPanel('inbox')" id="nav-inbox">
+        <i class="ti ti-inbox nav-icon" aria-hidden="true"></i>
+        <span class="nav-text">Messages</span>
+        <span class="nav-badge" id="pendingBadge" style="display:none">0</span>
+      </button>
+      <button class="nav-item" onclick="showPanel('history')" id="nav-history">
+        <i class="ti ti-clock nav-icon" aria-hidden="true"></i>
+        <span class="nav-text">History</span>
+      </button>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Tools</div>
+      <button class="nav-item" onclick="showPanel('guardrail')" id="nav-guardrail">
+        <i class="ti ti-shield-check nav-icon" aria-hidden="true"></i>
+        <span class="nav-text">Guardrail</span>
+      </button>
+      <button class="nav-item" onclick="showPanel('simplifier')" id="nav-simplifier">
+        <i class="ti ti-file-text nav-icon" aria-hidden="true"></i>
+        <span class="nav-text">Simplifier</span>
+      </button>
+      <button class="nav-item" onclick="showPanel('structurer')" id="nav-structurer">
+        <i class="ti ti-layout-list nav-icon" aria-hidden="true"></i>
+        <span class="nav-text">SOP Structurer</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="sidebar-footer">
+    <div class="clinician-row">
+      <div class="avatar" id="sidebarAvatar">WB</div>
+      <div>
+        <div class="cli-name" id="sidebarName">Loading...</div>
+        <div class="cli-role">Aesthetic Nurse</div>
+      </div>
+    </div>
   </div>
 </div>
 
+<div class="main">
+  <div class="topbar">
+    <div>
+      <div class="page-title" id="topTitle">Patient Messages</div>
+      <div class="page-sub" id="topSub">Loading messages...</div>
+    </div>
+    <div class="topbar-right">
+      <button class="tbtn" onclick="loadMessages()">&#8635; Refresh</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <div class="panel active" id="panel-inbox">
+      <div class="summary-grid" id="summaryGrid"></div>
+      <div id="messagesContainer"><div class="loading-state">Loading messages...</div></div>
+    </div>
+
+    <div class="panel" id="panel-history">
+      <div id="historyContainer"><div class="loading-state">Loading history...</div></div>
+    </div>
+
+    <div class="panel" id="panel-guardrail">
+      <div class="tool-card">
+        <div class="tool-header">
+          <div class="tool-icon-wrap gold">&#128737;</div>
+          <div>
+            <div class="tool-title">Reply Guardrail</div>
+            <div class="tool-desc">Evaluate a draft reply against 5 safety checks before sending to a patient</div>
+          </div>
+        </div>
+        <label class="field-label">Patient message</label>
+        <textarea class="tinput" id="gr-message" rows="3" placeholder="Paste the patient's original message here..."></textarea>
+        <label class="field-label">Classification label</label>
+        <textarea class="tinput" id="gr-label" rows="1" placeholder="e.g. red_flag_escalation"></textarea>
+        <label class="field-label">Severity</label>
+        <textarea class="tinput" id="gr-severity" rows="1" placeholder="high / medium / low"></textarea>
+        <label class="field-label">Draft reply to evaluate</label>
+        <textarea class="tinput" id="gr-reply" rows="4" placeholder="Paste the draft reply you want to check..."></textarea>
+        <button class="run-btn" id="gr-btn" onclick="runGuardrail()">Run safety check</button>
+        <div class="result-box" id="gr-result"></div>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-simplifier">
+      <div class="tool-card">
+        <div class="tool-header">
+          <div class="tool-icon-wrap teal">&#128196;</div>
+          <div>
+            <div class="tool-title">Patient Education Simplifier</div>
+            <div class="tool-desc">Convert clinical aftercare documents into plain language, checklist, FAQ, and SMS formats</div>
+          </div>
+        </div>
+        <label class="field-label">Document title</label>
+        <textarea class="tinput" id="si-title" rows="1" placeholder="e.g. Lip Filler Aftercare Instructions"></textarea>
+        <label class="field-label">Treatment type (optional)</label>
+        <textarea class="tinput" id="si-treatment" rows="1" placeholder="e.g. lip filler, botox, CO2 laser"></textarea>
+        <label class="field-label">Clinical document content</label>
+        <textarea class="tinput" id="si-content" rows="6" placeholder="Paste the clinical aftercare document here..."></textarea>
+        <button class="run-btn" id="si-btn" onclick="runSimplifier()">Simplify document</button>
+        <div class="result-box" id="si-result"></div>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-structurer">
+      <div class="tool-card">
+        <div class="tool-header">
+          <div class="tool-icon-wrap purple">&#128196;</div>
+          <div>
+            <div class="tool-title">SOP Structurer</div>
+            <div class="tool-desc">Convert messy clinic notes and protocol drafts into standardised documents with action tables and escalation rules</div>
+          </div>
+        </div>
+        <label class="field-label">Document title</label>
+        <textarea class="tinput" id="st-title" rows="1" placeholder="e.g. Vascular Occlusion Protocol"></textarea>
+        <label class="field-label">Author (optional)</label>
+        <textarea class="tinput" id="st-author" rows="1" placeholder="e.g. Dr Sarah Ahmed"></textarea>
+        <label class="field-label">Unstructured document content</label>
+        <textarea class="tinput" id="st-content" rows="6" placeholder="Paste the raw unstructured SOP or clinic notes here..."></textarea>
+        <button class="run-btn" id="st-btn" onclick="runStructurer()">Structure document</button>
+        <div class="result-box" id="st-result"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+
 <script>
-const API_BASE = "https://clinic-inbox-triage.onrender.com";
+const API = "https://clinic-inbox-triage.onrender.com";
 const token = localStorage.getItem("clinic_token");
-const clinicianName = localStorage.getItem("clinic_name") || "Clinic Staff";
-if(!token){ window.location.href = "https://clinic-login.netlify.app/"; }
-let allMessages = [];
+const cName = localStorage.getItem("clinic_name") || "Clinician";
+
+if(!token){ window.location.href = "login.html"; }
+
+document.getElementById("sidebarName").textContent = cName;
+const initials = cName.split(" ").map(w=>w[0]).join("").toUpperCase().slice(0,2);
+document.getElementById("sidebarAvatar").textContent = initials;
+
+function showPanel(name){
+  document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));
+  document.querySelectorAll(".nav-item").forEach(n=>n.classList.remove("active"));
+  document.getElementById("panel-"+name).classList.add("active");
+  document.getElementById("nav-"+name).classList.add("active");
+  const titles = {inbox:"Patient Messages",history:"Message History",guardrail:"Reply Guardrail",simplifier:"Document Simplifier",structurer:"SOP Structurer"};
+  const subs = {inbox:"Sorted by urgency",history:"All messages including replied",guardrail:"Safety check before sending","simplifier":"Convert clinical documents for patients",structurer:"Standardise internal protocols"};
+  document.getElementById("topTitle").textContent = titles[name];
+  document.getElementById("topSub").textContent = subs[name];
+  if(name==="history") loadHistory();
+}
+
+function authHeaders(){
+  return {"Content-Type":"application/json","Authorization":"Bearer "+token};
+}
 
 async function loadMessages(){
-  const container = document.getElementById("messagesContainer");
   try{
-    const res = await fetch(API_BASE + "/inbox/messages", {headers: {"Authorization": "Bearer " + token}});
-    allMessages = await res.json();
-    renderSummary();
-    renderMessages();
-    document.getElementById("lastUpdated").textContent = "Updated " + new Date().toLocaleTimeString();
+    const res = await fetch(API+"/inbox/messages",{headers:authHeaders()});
+    if(res.status===401){window.location.href="login.html";return;}
+    const msgs = await res.json();
+    const pending = msgs.filter(m=>m.status==="pending");
+    const high = pending.filter(m=>m.severity==="high").length;
+    const med = pending.filter(m=>m.severity==="medium").length;
+    const low = pending.filter(m=>m.severity==="low").length;
+    const badge = document.getElementById("pendingBadge");
+    if(pending.length>0){badge.style.display="";badge.textContent=pending.length;}else{badge.style.display="none";}
+    document.getElementById("topSub").textContent = pending.length+" pending — sorted by urgency";
+    document.getElementById("summaryGrid").innerHTML = `
+      <div class="scard"><div class="snum red">${high}</div><div class="slbl">High severity</div></div>
+      <div class="scard"><div class="snum amber">${med}</div><div class="slbl">Medium severity</div></div>
+      <div class="scard"><div class="snum">${low}</div><div class="slbl">Routine</div></div>
+      <div class="scard"><div class="snum">${pending.length}</div><div class="slbl">Total pending</div></div>`;
+    if(msgs.length===0){
+      document.getElementById("messagesContainer").innerHTML="<div class='empty-state'>No messages yet. Share the patient form to start receiving messages.</div>";
+      return;
+    }
+    document.getElementById("messagesContainer").innerHTML = msgs.filter(m=>m.status==="pending").map(m=>renderCard(m)).join("");
   }catch(e){
-    container.innerHTML = "<div class='empty-state'>Could not load messages. " + e.message + "</div>";
+    document.getElementById("messagesContainer").innerHTML="<div class='empty-state'>Could not load messages. "+e.message+"</div>";
   }
 }
 
-function renderSummary(){
-  const pending = allMessages.filter(m => m.status === "pending");
-  const high = pending.filter(m => m.severity === "high").length;
-  const medium = pending.filter(m => m.severity === "medium").length;
-  const low = pending.filter(m => m.severity === "low").length;
-  const total = pending.length;
-
-  document.getElementById("summaryRow").innerHTML = `
-    <div class="summary-card"><div class="summary-count">${total}</div><div class="summary-label">Pending</div></div>
-    <div class="summary-card high"><div class="summary-count">${high}</div><div class="summary-label">High</div></div>
-    <div class="summary-card medium"><div class="summary-count">${medium}</div><div class="summary-label">Medium</div></div>
-    <div class="summary-card"><div class="summary-count">${low}</div><div class="summary-label">Low</div></div>
-  `;
+async function loadHistory(){
+  try{
+    const res = await fetch(API+"/inbox/messages",{headers:authHeaders()});
+    const msgs = await res.json();
+    const replied = msgs.filter(m=>m.status==="replied");
+    if(replied.length===0){document.getElementById("historyContainer").innerHTML="<div class='empty-state'>No replied messages yet.</div>";return;}
+    document.getElementById("historyContainer").innerHTML = replied.map(m=>renderCard(m,true)).join("");
+  }catch(e){}
 }
 
-function renderMessages(){
-  const container = document.getElementById("messagesContainer");
-  if(allMessages.length === 0){
-    container.innerHTML = "<div class='empty-state'>No messages yet.</div>";
-    return;
-  }
-
-  container.innerHTML = allMessages.map(msg => {
-    const isReplied = msg.status === "replied";
-    const tags = msg.reasoning_tags ? msg.reasoning_tags.split(",").map(t => "<span class='tag'>" + t.trim() + "</span>").join("") : "";
-    const meta = [msg.patient_email, msg.patient_phone].filter(Boolean).join("  |  ");
-
-    return `
-      <div class="message-card ${msg.severity} ${isReplied ? 'replied' : ''}">
-        <div class="card-top">
-          <div>
-            <div class="patient-name">${escapeHtml(msg.patient_name)}</div>
-            <div class="patient-meta">${escapeHtml(meta)}</div>
-          </div>
-          <div class="severity-pill ${msg.severity}">${msg.primary_label.replace(/_/g, " ")}</div>
-        </div>
-        <div class="patient-message">${escapeHtml(msg.message_text)}</div>
-        <div class="card-section">
-          <div class="section-label">Recommended Action</div>
-          <div class="action-text">${escapeHtml(msg.recommended_action)}</div>
-        </div>
-        <div class="card-section">
-          <div class="section-label">Reply</div>
-          <textarea class="reply-box" id="reply-${msg.id}" ${isReplied ? 'disabled' : ''}>${escapeHtml(isReplied ? msg.final_reply_sent : msg.safe_reply)}</textarea>
-          <div class="tags-row">${tags}</div>
-        </div>
-        <div class="card-actions">
-          ${isReplied
-            ? `<div class="replied-badge">Replied by ${escapeHtml(msg.replied_by || 'staff')}</div>`
-            : `<button class="btn-send" onclick="sendReply('${msg.id}')">Send Reply</button>`
-          }
-        </div>
+function renderCard(m, isHistory=false){
+  const replied = m.status==="replied";
+  const tags = m.reasoning_tags?m.reasoning_tags.split(",").map(t=>"<span class='tag'>"+t.trim()+"</span>").join(""):"";
+  const meta = [m.patient_email,m.patient_phone].filter(Boolean).join("  |  ");
+  const label = m.primary_label?m.primary_label.replace(/_/g," "):"";
+  const timeAgo = m.submitted_at?new Date(m.submitted_at).toLocaleString():"";
+  return `<div class="msg-card ${m.severity||'low'} ${replied?'replied':''}">
+    <div class="card-top">
+      <div>
+        <div class="pt-name">${esc(m.patient_name)}</div>
+        <div class="pt-meta">${esc(meta)}${meta?"  |  ":""}${timeAgo}</div>
       </div>
-    `;
-  }).join("");
+      <span class="pill ${m.severity||'low'}">${label}</span>
+    </div>
+    <div class="card-body">${esc(m.message_text)}</div>
+    <div class="card-section">
+      <div class="slabel">Recommended action</div>
+      <div class="action-box">${esc(m.recommended_action)}</div>
+    </div>
+    <div class="card-section">
+      <div class="slabel">Reply</div>
+      <textarea class="reply-area" id="reply-${m.id}" ${replied?"disabled":""}>${esc(replied?m.final_reply_sent:m.safe_reply)}</textarea>
+      ${tags?`<div class="tags-row">${tags}</div>`:""}
+    </div>
+    <div class="card-footer">
+      <span class="foot-action">${replied?"Replied by "+(m.replied_by||"staff"):"Ready to send"}</span>
+      ${replied?`<span class="replied-badge">&#10003; Replied</span>`:
+        `<div class="btn-row">
+          <button class="btn-outline" onclick="copyReply('${m.id}')">Copy</button>
+          <button class="btn-primary" id="sendbtn-${m.id}" onclick="sendReply('${m.id}')">Send reply</button>
+        </div>`}
+    </div>
+  </div>`;
 }
 
-async function sendReply(messageId){
-  const textarea = document.getElementById("reply-" + messageId);
-  const replyText = textarea.value.trim();
-  if(!replyText){ alert("Reply cannot be empty."); return; }
+function esc(t){if(!t)return"";const d=document.createElement("div");d.textContent=t;return d.innerHTML;}
 
+function copyReply(id){
+  const t=document.getElementById("reply-"+id);
+  if(t){navigator.clipboard.writeText(t.value).then(()=>alert("Reply copied."));}
+}
+
+async function sendReply(msgId){
+  const textarea=document.getElementById("reply-"+msgId);
+  const btn=document.getElementById("sendbtn-"+msgId);
+  if(!textarea||!textarea.value.trim()){alert("Reply cannot be empty.");return;}
+  btn.disabled=true;btn.textContent="Sending...";
   try{
-    const res = await fetch(API_BASE + "/inbox/reply", {
-      method: "POST",
-      headers: {"Content-Type": "application/json", "Authorization": "Bearer " + token},
-      body: JSON.stringify({
-        message_id: messageId,
-        reply_text: replyText,
-        replied_by: clinicianName
-      })
+    const res=await fetch(API+"/inbox/reply",{
+      method:"POST",headers:authHeaders(),
+      body:JSON.stringify({message_id:msgId,reply_text:textarea.value.trim(),replied_by:cName})
     });
-    if(!res.ok){ throw new Error("Failed to send reply"); }
+    if(!res.ok){throw new Error("Failed to send");}
     await loadMessages();
-  }catch(e){
-    alert("Error sending reply: " + e.message);
-  }
+  }catch(e){alert("Error: "+e.message);btn.disabled=false;btn.textContent="Send reply";}
 }
 
-function escapeHtml(text){
-  if(!text) return "";
-  const div = document.createElement("div");
-  div.textContent = text;
-  return div.innerHTML;
+async function runGuardrail(){
+  const msg=document.getElementById("gr-message").value.trim();
+  const label=document.getElementById("gr-label").value.trim();
+  const severity=document.getElementById("gr-severity").value.trim();
+  const reply=document.getElementById("gr-reply").value.trim();
+  if(!msg||!label||!severity||!reply){alert("Please fill in all fields.");return;}
+  const btn=document.getElementById("gr-btn");
+  btn.disabled=true;btn.textContent="Checking...";
+  const result=document.getElementById("gr-result");
+  result.className="result-box";result.innerHTML="Evaluating...";result.classList.add("visible");
+  try{
+    const res=await fetch(API+"/guardrail",{
+      method:"POST",headers:authHeaders(),
+      body:JSON.stringify({message_id:"gr-"+Date.now(),patient_message:msg,primary_label:label,severity:severity,reply:reply})
+    });
+    const data=await res.json();
+    const overall=data.overall_status;
+    const color=overall==="pass"?"#27500A":overall==="warn"?"#633806":"#791F1F";
+    const bg=overall==="pass"?"#eaf3de":overall==="warn"?"#faeeda":"#fcebeb";
+    let html=`<div style="background:${bg};border-radius:8px;padding:10px 12px;margin-bottom:12px;font-size:13px;font-weight:500;color:${color}">Overall: ${overall.toUpperCase()} — Reply ${data.reply_approved?"approved":"not approved"}</div>`;
+    html+=data.checks.map(c=>`<div class="check-row"><span class="check-status ${c.status}">${c.status}</span><div><div class="check-name">${c.check_name.replace(/_/g," ")}</div><div class="check-reason">${c.reason}</div></div></div>`).join("");
+    if(data.revised_reply){html+=`<div style="margin-top:12px"><div class="slabel">Suggested safe reply</div><div class="action-box" style="margin-top:6px">${esc(data.revised_reply)}</div></div>`;}
+    result.innerHTML=html;
+  }catch(e){result.innerHTML="Error: "+e.message;}
+  btn.disabled=false;btn.textContent="Run safety check";
+}
+
+async function runSimplifier(){
+  const title=document.getElementById("si-title").value.trim();
+  const treatment=document.getElementById("si-treatment").value.trim();
+  const content=document.getElementById("si-content").value.trim();
+  if(!title||!content){alert("Please enter a title and document content.");return;}
+  const btn=document.getElementById("si-btn");
+  btn.disabled=true;btn.textContent="Simplifying...";
+  const result=document.getElementById("si-result");
+  result.className="result-box visible";result.innerHTML="Processing document...";
+  try{
+    const res=await fetch(API+"/simplify",{
+      method:"POST",headers:authHeaders(),
+      body:JSON.stringify({document_id:"si-"+Date.now(),title:title,content:content,treatment_type:treatment||null})
+    });
+    const data=await res.json();
+    let html=`<div class="result-section"><div class="result-label">Plain language version</div><div class="result-content">${esc(data.plain_language)}</div></div>`;
+    html+=`<div class="result-section"><div class="result-label">Grade 6 reading level version</div><div class="result-content">${esc(data.grade6_version)}</div>`;
+    if(data.flesch_kincaid_grade!=null)html+=`<div style="margin-top:6px;font-size:11px;color:#9a8878">FK Grade: ${data.flesch_kincaid_grade}</div>`;
+    html+=`</div>`;
+    if(data.checklist&&data.checklist.length){
+      html+=`<div class="result-section"><div class="result-label">Aftercare checklist</div>`;
+      html+=data.checklist.map(i=>`<div class="checklist-item"><div class="checklist-dot ${i.is_warning?'warning':''}"></div><div><span style="font-size:11px;color:#9a8878;text-transform:uppercase;letter-spacing:.03em">${i.timeframe}</span><div>${esc(i.instruction)}</div></div></div>`).join("");
+      html+=`</div>`;
+    }
+    if(data.faq&&data.faq.length){
+      html+=`<div class="result-section"><div class="result-label">FAQ</div>`;
+      html+=data.faq.map(f=>`<div class="faq-item"><div class="faq-q">${esc(f.question)}</div><div class="faq-a">${esc(f.answer)}</div></div>`).join("");
+      html+=`</div>`;
+    }
+    if(data.sms_messages&&data.sms_messages.length){
+      html+=`<div class="result-section"><div class="result-label">SMS follow-up messages</div>`;
+      html+=data.sms_messages.map(s=>`<div class="sms-item"><div class="sms-seq">Day ${s.sequence} &bull; ${s.character_count} chars</div>${esc(s.text)}</div>`).join("");
+      html+=`</div>`;
+    }
+    result.innerHTML=html;
+  }catch(e){result.innerHTML="Error: "+e.message;}
+  btn.disabled=false;btn.textContent="Simplify document";
+}
+
+async function runStructurer(){
+  const title=document.getElementById("st-title").value.trim();
+  const author=document.getElementById("st-author").value.trim();
+  const content=document.getElementById("st-content").value.trim();
+  if(!title||!content){alert("Please enter a title and document content.");return;}
+  const btn=document.getElementById("st-btn");
+  btn.disabled=true;btn.textContent="Structuring...";
+  const result=document.getElementById("st-result");
+  result.className="result-box visible";result.innerHTML="Processing document...";
+  try{
+    const res=await fetch(API+"/structure",{
+      method:"POST",headers:authHeaders(),
+      body:JSON.stringify({document_id:"st-"+Date.now(),title:title,content:content,author:author||null})
+    });
+    const data=await res.json();
+    const v=data.version_metadata;
+    let html=`<div class="version-block">v${v.version_number} &bull; ${v.author} &bull; ${v.status} &bull; Review: ${v.review_date}</div>`;
+    if(data.sections&&data.sections.length){
+      html+=`<div class="result-section" style="margin-top:12px">`;
+      html+=data.sections.map(s=>`<div class="struct-section"><div class="struct-heading">${esc(s.heading)}</div><div class="struct-content">${esc(s.content)}</div></div>`).join("");
+      html+=`</div>`;
+    }
+    if(data.action_table&&data.action_table.length){
+      html+=`<div class="result-section"><div class="result-label">Action table</div><table class="action-table"><thead><tr><th>Who</th><th>What</th><th>When</th></tr></thead><tbody>`;
+      html+=data.action_table.map(r=>`<tr><td>${esc(r.who)}</td><td>${esc(r.what)}</td><td>${esc(r.when)}</td></tr>`).join("");
+      html+=`</tbody></table></div>`;
+    }
+    if(data.escalation_rules&&data.escalation_rules.length){
+      html+=`<div class="result-section"><div class="result-label">Escalation rules</div>`;
+      html+=data.escalation_rules.map(r=>`<div class="esc-item"><div class="esc-trigger">Trigger: ${esc(r.trigger)}</div><div class="esc-action">Action: ${esc(r.action)} &rarr; ${esc(r.escalate_to)} (${esc(r.timeframe)})</div></div>`).join("");
+      html+=`</div>`;
+    }
+    result.innerHTML=html;
+  }catch(e){result.innerHTML="Error: "+e.message;}
+  btn.disabled=false;btn.textContent="Structure document";
 }
 
 loadMessages();
-setInterval(loadMessages, 30000);
+setInterval(loadMessages,30000);
 </script>
 </body>
 </html>
